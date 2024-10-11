@@ -24,42 +24,13 @@ namespace voxelStruct {
     class VoxelHashing {
     public:
         VoxelHashing(float voxel_size) : voxel_size_(voxel_size) {}
-
+        
         void addPoint(const pcl::PointXYZ& point) {
             auto voxel_index = getVoxelIndex(point);
             voxel_map_[voxel_index].push_back(point);
         }
 
-     
-        std::vector<pcl::PointXYZ> radiusSearch(const pcl::PointXYZ& query_point, float radius) {
-            std::vector<pcl::PointXYZ> neighbors;
-            int voxel_range = std::ceil(radius / voxel_size_);
 
-            auto query_voxel = getVoxelIndex(query_point);
-
-           
-            for (int i = -voxel_range; i <= voxel_range; ++i) {
-                for (int j = -voxel_range; j <= voxel_range; ++j) {
-                    for (int k = -voxel_range; k <= voxel_range; ++k) {
-                        std::tuple<int, int, int> neighbor_voxel(std::get<0>(query_voxel) + i, std::get<1>(query_voxel) + j, std::get<2>(query_voxel) + k);
-
-
-                      
-                        if (voxel_map_.find(neighbor_voxel) != voxel_map_.end()) {
-                            for (const auto& point : voxel_map_[neighbor_voxel]) {
-                                if (pcl::geometry::squaredDistance(query_point, point) <= radius * radius) {
-                                    neighbors.push_back(point);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return neighbors;
-        }
-
-       
 
     private:
         float voxel_size_; 
